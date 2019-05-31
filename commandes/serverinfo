@@ -1,0 +1,19 @@
+const  Discord  =  require ( " discord.js " );
+
+module . exportations . run  =  async ( bot , message , args ) => {
+    laissez sicon =  message . guilde . iconURL ;
+    let serverembed =  new  Discord.RichEmbed ()
+    . setDescription ( " le fondateur de ce serveur est Mr_Gold, ce serveur discord avait été créer pour la Arthefaque maintenant devenue Arthezia (faction sur paladium depuis la v4.8) " )
+    . setColor ( " # 15f153 " )
+    . setThumbnail (sicon)
+    . addField ( " Nom du serveur " , message . guild . name )
+    . addField ( " Créé le " , message . guilde . createdAt )
+    . addField ( " You Joined " , message . membre . joinedAt )
+    . addField ( " Nombre total de membres " , message . guild . memberCount );
+
+    message . canal . send (serverembed);
+}
+
+module . exportations . help  = {
+  nom : " serverinfo "
+}
