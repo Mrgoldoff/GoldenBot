@@ -1,48 +1,48 @@
-const  Discord  =  require ( " discord.js " );
-const  ms  =  require ( " ms " );
+const Discord = require("discord.js");
+const ms = require("ms");
 
-module . exportations . run  =  async ( bot , message , args ) => {
+module.exports.run = async (bot, message, args) => {
 
-  // ! tempmute @user 1s / m / h / d
+  //!tempmute @user 1s/m/h/d
 
-  laissez tomute =  message . guilde . membre ( message . mentions . utilisateurs . first () ||  message . guilde . membres . get (args [ 0 ]));
-  si ( ! tomute) renvoie le  message . répondre ( " Impossible de trouver l'utilisateur. " );
-  if ( tomute . hasPermission ( " MANAGE_MESSAGES " )) renvoie le  message . répondre ( " Vous ne pouvez pas les mettre en sourdine! " );
-  laissez muterole =  message . guilde . les rôles . trouver ( ` nom ` , " coupé " );
-  // début du rôle de création
-  si ( ! muterole) {
-    essayer {
-      muterole =  attendre le  message . guilde . createRole ({
-        nom :  "en sourdine " ,
-        couleur :  " # 000000 " ,
-        autorisations : []
+  let tomute = message.guild.member(message.mentions.users.first() || message.guild.members.get(args[0]));
+  if(!tomute) return message.reply("Impossible de trouvez l'utilisateur.");
+  if(tomute.hasPermission("MANAGE_MESSAGES")) return message.reply("Je ne peut pas le muet!");
+  let muterole = message.guild.roles.find(`name`, "muted");
+  //start of create role
+  if(!muterole){
+    try{
+      muterole = await message.guild.createRole({
+        name: "muted",
+        color: "#000000",
+        permissions:[]
       })
-      message . guilde . canaux . forEach ( async ( channel , id ) => {
-        attendre le  canal . overwritePermissions (muterole, {
-          SEND_MESSAGES :  false ,
-          ADD_REACTIONS :  false
+      message.guild.channels.forEach(async (channel, id) => {
+        await channel.overwritePermissions(muterole, {
+          SEND_MESSAGES: false,
+          ADD_REACTIONS: false
         });
       });
-    } catch (e) {
-      console . log ( e . pile );
+    }catch(e){
+      console.log(e.stack);
     }
   }
-  // fin du rôle de création
-  let mutetime = args [ 1 ];
-  si ( ! mutetime) renvoie le  message . répondre ( " Vous n'avez pas spécifié une heure! " );
+  //end of create role
+  let mutetime = args[1];
+  if(!mutetime) return message.reply("Vous n'avez pas spécifier de temps !");
 
-  attendre ( tomute . addRole ( muterole . id ));
-  message . reply ( ` <@ $ { tomute . id } > a été mis en sourdine pour $ { ms ( ms (heure de la machine)) } ` );
+  await(tomute.addRole(muterole.id));
+  message.reply(`<@${tomute.id}> à été muet par ${ms(ms(mutetime))}`);
 
-  setTimeout ( function () {
-    Tomute . removeRole ( muterole . id );
-    message . canal . send ( ` <@ $ { tomute . id } > a été mis en sourdine! ` );
-  }, ms (mutetime));
+  setTimeout(function(){
+    tomute.removeRole(muterole.id);
+    message.channel.send(`<@${tomute.id}> à été unmuted!`);
+  }, ms(mutetime));
 
 
-// fin du module
+//end of module
 }
 
-module . exportations . help  = {
-  nom :  " tempmute "
+module.exports.help = {
+  name: "tempmute"
 }
